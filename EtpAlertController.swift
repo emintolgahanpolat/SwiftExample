@@ -13,6 +13,7 @@ class EtpAlertController: UIViewController {
     var icon: UIImage?
     var message: String?
     var isCancelable:Bool = true
+    var isVerticalButton:Bool = false
     var preferredStyle: UIAlertController.Style?
     var actions : [EtpAlertAction] = []
     
@@ -103,7 +104,7 @@ class EtpAlertController: UIViewController {
         lbl.numberOfLines = 0
         lbl.text = self.message
         lbl.textAlignment = .center
-        lbl.font = .systemFont(ofSize: 17)
+        lbl.font = .systemFont(ofSize: 14)
         return lbl
     }()
     
@@ -168,7 +169,7 @@ class EtpAlertController: UIViewController {
                 
                 
             }
-            if actions.count > 2 {
+            if actions.count > 2 || isVerticalButton {
                 btnStackView.axis  = NSLayoutConstraint.Axis.vertical
             }else {
                 btnStackView.axis  = NSLayoutConstraint.Axis.horizontal
