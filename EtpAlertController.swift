@@ -78,7 +78,7 @@ class EtpAlertController: UIViewController {
     
     
     
-     lazy var imageView:UIImageView = {
+    lazy var imageView:UIImageView = {
         var view = UIImageView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.contentMode = .scaleAspectFit
@@ -116,16 +116,18 @@ class EtpAlertController: UIViewController {
         view.backgroundColor = UIColor(white: 0, alpha: 0.5)
         self.configure()
         
-        view.isUserInteractionEnabled = true
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissAlert)))
-        NotificationCenter.default.addObserver(self, selector: #selector(rotated), name: UIDevice.orientationDidChangeNotification, object: nil)
+        if isCancelable{
+            view.isUserInteractionEnabled = true
+            view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.dismissAlert)))
+            NotificationCenter.default.addObserver(self, selector: #selector(rotated), name: UIDevice.orientationDidChangeNotification, object: nil)
+        }
+        
         
     }
     
     @objc func dismissAlert(){
-        if isCancelable{
-            self.dismiss(animated: true, completion: nil)
-        }
+        
+        self.dismiss(animated: true, completion: nil)
     }
     
     
@@ -231,7 +233,6 @@ class EtpAlertController: UIViewController {
         contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor,constant: -20).isActive = true
         
         if icon != nil {
-            imageView.topAnchor.constraint(equalTo: contentStackView.topAnchor,constant: 20).isActive = true
             imageView.heightAnchor.constraint(greaterThanOrEqualToConstant: 80).isActive = true
         }
         initButtons()
