@@ -20,16 +20,70 @@ class EtpAlertController: UIViewController {
     private lazy var popUpView:UIView = {
         var view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .lightGray
         view.cornerRadius(radius: 12)
         return view
     }()
     
-    private lazy var imageView:UIImageView = {
+    
+    private lazy var containerScrollView :UIScrollView = {
+        var view = UIScrollView()
+        view.bounces = false
+        view.verticalScrollIndicatorInsets = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: -3)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    
+    
+    private lazy var containerStackView :UIStackView = {
+        var view = UIStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.distribution  = UIStackView.Distribution.fill
+        view.alignment = UIStackView.Alignment.fill
+        view.spacing   =  0.5
+        view.axis  = NSLayoutConstraint.Axis.vertical
+        return view
+    }()
+    
+    
+    private lazy var contentStackView :UIStackView = {
+        var view = UIStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.distribution  = UIStackView.Distribution.fill
+        view.alignment = UIStackView.Alignment.fill
+        view.spacing   = 20.0
+        view.axis  = NSLayoutConstraint.Axis.vertical
+        return view
+    }()
+    
+    private lazy var contentView :UIView = {
+        var view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemBackground
+        return view
+    }()
+    
+    
+    
+    private lazy var btnStackView :UIStackView = {
+        var view = UIStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.distribution  = UIStackView.Distribution.fillEqually
+        view.alignment = UIStackView.Alignment.fill
+        view.spacing   = 0.5
+        return view
+    }()
+    
+    
+    
+    
+     lazy var imageView:UIImageView = {
         var view = UIImageView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.contentMode = .scaleAspectFit
         view.image = icon
+        
         return view
         
     }()
@@ -51,33 +105,6 @@ class EtpAlertController: UIViewController {
         lbl.textAlignment = .center
         lbl.font = .systemFont(ofSize: 17)
         return lbl
-    }()
-    
-    
-    private lazy var containerScrollView :UIScrollView = {
-        var view = UIScrollView()
-        view.bounces = false
-        view.verticalScrollIndicatorInsets = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: -3)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    private lazy var contentView :UIView = {
-        var view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    
-    
-    private lazy var btnStackView :UIStackView = {
-        var view = UIStackView()
-        
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.distribution  = UIStackView.Distribution.fillEqually
-        view.alignment = UIStackView.Alignment.fill
-        view.spacing   = 1.0
-        return view
     }()
     
     
@@ -119,9 +146,14 @@ class EtpAlertController: UIViewController {
         if !actions.isEmpty {
             for (index, alertAction) in actions.enumerated() {
                 let myBtn = UIButton()
+                myBtn.translatesAutoresizingMaskIntoConstraints = false
+                myBtn.heightAnchor.constraint(equalToConstant: 46).isActive=true
                 myBtn.setTitle(alertAction.title, for: .normal)
+                myBtn.backgroundColor = .white
                 if alertAction.style == .default{
                     myBtn.setTitleColor(.orange, for: .normal)
+                    
+                    
                 }else{
                     myBtn.setTitleColor(.gray, for: .normal)
                 }
@@ -130,6 +162,9 @@ class EtpAlertController: UIViewController {
                 
                 myBtn.addTarget(self, action: #selector(self.buttonClicked), for: .touchUpInside)
                 btnStackView.addArrangedSubview(myBtn)
+                
+                
+                
             }
             if actions.count > 2 {
                 btnStackView.axis  = NSLayoutConstraint.Axis.vertical
@@ -156,23 +191,25 @@ class EtpAlertController: UIViewController {
         self.view.addSubview(popUpView)
         
         popUpView.addSubview(containerScrollView)
-        containerScrollView.addSubview(contentView)
-        contentView.addSubview(imageView)
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(descriptionLabel)
-        contentView.addSubview(btnStackView)
+        containerScrollView.addSubview(containerStackView)
+        containerStackView.addArrangedSubview(contentView)
+        contentView.addSubview(contentStackView)
+        contentStackView.addArrangedSubview(imageView)
+        contentStackView.addArrangedSubview(titleLabel)
+        contentStackView.addArrangedSubview(descriptionLabel)
+        containerStackView.addArrangedSubview(btnStackView)
         
+        
+        let h1 = popUpView.heightAnchor.constraint(equalTo: containerStackView.heightAnchor)
+        h1.priority = .defaultLow
+        h1.isActive = true
         
         popUpView.widthAnchor.constraint(equalTo:  self.view.widthAnchor,multiplier: 0.72).isActive = true
-        //popUpView.heightAnchor.constraint(equalTo: contentView.heightAnchor).isActive = true
-        //popUpView.heightAnchor.constraint(lessThanOrEqualTo: self.view.heightAnchor,multiplier: 0.72).isActive = true
+        popUpView.heightAnchor.constraint(lessThanOrEqualTo: self.view.heightAnchor,multiplier: 0.72).isActive = true
         popUpView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
         popUpView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
         
         
-        popUpView.heightAnchor.constraint(lessThanOrEqualToConstant: 700).isActive=true
-        
-        popUpView.heightAnchor.constraint(greaterThanOrEqualToConstant: 200).isActive = true
         
         containerScrollView.topAnchor.constraint(equalTo: popUpView.topAnchor).isActive = true
         containerScrollView.widthAnchor.constraint(equalTo: popUpView.widthAnchor).isActive = true
@@ -181,38 +218,22 @@ class EtpAlertController: UIViewController {
         
         
         
-        contentView.topAnchor.constraint(equalTo: containerScrollView.topAnchor,constant: 20).isActive = true
-        contentView.widthAnchor.constraint(equalTo: containerScrollView.widthAnchor).isActive = true
-        contentView.centerXAnchor.constraint(equalTo: containerScrollView.centerXAnchor).isActive = true
-        contentView.bottomAnchor.constraint(equalTo: containerScrollView.bottomAnchor,constant: -20).isActive = true
+        containerStackView.topAnchor.constraint(equalTo: containerScrollView.topAnchor).isActive = true
+        containerStackView.widthAnchor.constraint(equalTo: containerScrollView.widthAnchor).isActive = true
+        containerStackView.centerXAnchor.constraint(equalTo: containerScrollView.centerXAnchor).isActive = true
+        containerStackView.bottomAnchor.constraint(equalTo: containerScrollView.bottomAnchor).isActive = true
         
         
-        imageView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        imageView.widthAnchor.constraint(equalTo: contentView.widthAnchor).isActive = true
+        
+        contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        contentStackView.widthAnchor.constraint(equalTo: contentView.widthAnchor,multiplier: 0.9).isActive = true
+        contentStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+        contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor,constant: -20).isActive = true
+        
         if icon != nil {
-            imageView.heightAnchor.constraint(equalToConstant: 80).isActive = true
+            imageView.topAnchor.constraint(equalTo: contentStackView.topAnchor,constant: 20).isActive = true
+            imageView.heightAnchor.constraint(greaterThanOrEqualToConstant: 80).isActive = true
         }
-        
-        imageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        // imageView.bottomAnchor.constraint(equalTo: titleLabel.topAnchor).isActive = true
-        
-        titleLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor,constant: 20).isActive = true
-        titleLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor,multiplier: 0.9).isActive = true
-        titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        //titleLabel.bottomAnchor.constraint(equalTo: descriptionLabel.topAnchor).isActive = true
-        
-        descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor,constant: 20).isActive = true
-        descriptionLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor,multiplier: 0.9).isActive = true
-        descriptionLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        //descriptionLabel.bottomAnchor.constraint(equalTo: btnStackView.bottomAnchor).isActive = true
-        
-        
-        btnStackView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor).isActive = true
-        btnStackView.widthAnchor.constraint(equalTo: contentView.widthAnchor).isActive = true
-        btnStackView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        btnStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-        
-        
         initButtons()
     }
     
